@@ -5,6 +5,7 @@ import com.dvivasva.card.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -13,6 +14,11 @@ import reactor.core.publisher.Mono;
 public class CardController {
 
     private final CardService cardService;
+
+    @GetMapping
+    public Flux<CardDto> read() {
+        return cardService.read();
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -23,6 +29,10 @@ public class CardController {
     @PutMapping("/{id}")
     public Mono<CardDto> update( @RequestBody Mono<CardDto> cardDtoMono,@PathVariable String id){
         return cardService.update(cardDtoMono,id);
+    }
+    @DeleteMapping("/{id}")
+    public Mono<Void> delete(@PathVariable String id){
+        return this.cardService.delete(id);
     }
 
     @GetMapping("/{number}")

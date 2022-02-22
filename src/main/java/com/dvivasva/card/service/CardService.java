@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
@@ -23,6 +24,11 @@ public class CardService {
     private final ReactiveMongoTemplate reactiveMongoTemplate;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final static Logger logger= LoggerFactory.getLogger(CardService.class);
+
+    public Flux<CardDto> read(){
+        logger.info("inside methode read");
+        return cardRepository.findAll().map(CardUtil::entityToDto);
+    }
 
     public Mono<CardDto> create(Mono<CardDto> entityToDto){
 
@@ -53,6 +59,10 @@ public class CardService {
                 .flatMap(cardRepository::save)
                 .map(CardUtil::entityToDto);
 
+    }
+
+    public Mono<Void> delete(String id){
+        return cardRepository.deleteById(id);
     }
 
     public Mono<CardDto> findByNumber(String number){
